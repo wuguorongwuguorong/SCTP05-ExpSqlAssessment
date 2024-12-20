@@ -40,3 +40,31 @@ CREATE TABLE schedules(
    clock_in DATETIME NOT NULL,
    clock_out DATETIME NOT NULL
 ) engine = innodb;
+
+CREATE TABLE invoices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    printed TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ); engine = innodb;
+
+--adding role and outlet id into employees table
+ALTER TABLE employees ADD COLUMN role_id int UNSIGNED;
+ALTER TABLE employees ADD COLUMN outlet_id int UNSIGNED;
+ALTER TABLE employees ADD CONSTRAINT fk_roles_employees FOREIGN KEY(role_id) REFERENCES roles(role_id);
+ALTER TABLE employees ADD CONSTRAINT fk_outlet_employees FOREIGN KEY(outlet_id) REFERENCES outlets(outlet_id);
+
+--adding employee and outlet id into schedules
+ALTER TABLE schedules ADD COLUMN employee_id int UNSIGNED;
+ALTER TABLE schedules ADD COLUMN outlet_id int UNSIGNED;
+ALTER TABLE schedules ADD CONSTRAINT fk_employees_schdules FOREIGN KEY(employee_id) REFERENCES employees(employee_id);
+ALTER TABLE schedules ADD CONSTRAINT fk_outlet_schdules FOREIGN KEY(outlet_id) REFERENCES outlets(outlet_id);
+
+--adding menu, outlet and customer id into invoices
+ALTER TABLE invoices ADD COLUMN customer_id int UNSIGNED;
+ALTER TABLE invoices ADD COLUMN menu_id int UNSIGNED;
+ALTER TABLE invoices ADD COLUMN outlet_id int UNSIGNED;
+ALTER TABLE invoices ADD CONSTRAINT fk_customers_invoice FOREIGN KEY(customer_id) REFERENCES customers(customer_id);
+ALTER TABLE invoices ADD CONSTRAINT fk_menu_invoice FOREIGN KEY(menu_id) REFERENCES menu(menu_id);
+ALTER TABLE invoices ADD CONSTRAINT fk_outlet_invoice FOREIGN KEY(outlet_id) REFERENCES outlets(outlet_id);
+
+
