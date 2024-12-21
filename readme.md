@@ -19,6 +19,10 @@ create a folder
 cd folder_name
 npm init
 yarn add express
+npm install mysql2
+npm install dotenv
+npm install handlebars-helpers
+
 
 Followed by creating index.js with the template listening code
 
