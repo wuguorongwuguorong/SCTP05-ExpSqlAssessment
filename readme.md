@@ -14,3 +14,13 @@ GRANT ALL PRIVILEGES on sakila.* TO 'ahkow'@'localhost' WITH GRANT OPTION;
  ```
 FLUSH PRIVILEGES;
 ```
+
+create a folder 
+cd folder_name
+npm init
+yarn add express
+
+Followed by creating index.js with the template listening code
+
+once initialized completed, can install handles in
+
