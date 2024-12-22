@@ -1,0 +1,25 @@
+{{#extends "base"}}
+
+{{#block "content"}}
+<h1>Create Customer</h1>
+<form method="POST">
+    <div>
+        <label>First Name</label>
+        <input type="text" name="custf_name" class="form-control" />
+    </div>
+    <div>
+        <label>Last Name</label>
+        <input type="text" name="custl_name" class="form-control" />
+    </div>
+    <div>
+        <label>Email</label>
+        <input type="text" name="cust_email" class="form-control" />
+    </div>
+
+    {{!-- <button type="submit">Create</button> --}}
+    <input type="submit" value="Create" class="btn btn-primary mt-3" />
+</form>
+
+{{/block}}
+
+{{/extends}}

@@ -91,6 +91,44 @@ async function main() {
         })
     })
 
+    //add new customers into database and display
+    app.get('/customers/create', async function (req, res) {
+        const [customers] = await connection.execute("SELECT * FROM customers")
+        console.log(customers);
+        res.render('create_customer', {
+            "allCustomers": customers,
+            "searchTerms": req.query
+        });
+    })
+
+    app.post('/customers/create', async function (req, res) {
+        const { custf_name, custl_name, cust_email } = req.body;
+        const query = "INSERT INTO customers(custf_name, custl_name, cust_email) VALUES (? ,?, ?);"
+        const results = await connection.execute(query, [custf_name, custl_name, cust_email]);
+        //res.send(results)
+        res.redirect('/customers');
+    })
+
+    app.get('/customers/:customer_id/update', async function (req, res) {
+        const [invoices] = await connection.execute("SELECT * FROM invoices")
+        const [customers] = await connection.execute("SELECT * FROM customers WHERE customer_id = ?",
+            [req.params.customer_id])
+        const customer = customers[0];
+        res.render('edit_customers', {
+            customer,
+            invoices
+        })
+    })
+
+    app.post('/customers/:customer_id/update', async function (req, res) {
+        const { custf_name, custl_name, cust_email } = req.body;
+        const query = `UPDATE customers SET custf_name= ? , custl_name = ? cust_email =?
+         WHERE customer_id =?`;
+        const bindings = [custf_name, custl_name, cust_email, customer_id = req.params_customer_id];
+        await connection.execute(query, bindings);
+        res.redirect('/customers')
+    })
+
 }
 main();
 
