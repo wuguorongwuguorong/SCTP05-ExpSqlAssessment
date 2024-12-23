@@ -3,6 +3,7 @@ const hbs = require('hbs');
 const wax = require('wax-on');
 const { createConnection } = require('mysql2/promise');
 const waxOn = require('wax-on');
+const res = require('express/lib/response');
 require('dotenv').config();
 
 // 1D. SETUP WAX ON (FOR TEMPLATE INHERITANCE)
@@ -83,7 +84,7 @@ async function main() {
         })
     })
 
-    //add new customers into database and display
+    //add new customers into database and display in a new page
     app.get('/customers/create', async function (req, res) {
         const [customers] = await connection.execute("SELECT * FROM customers")
         console.log(customers);
@@ -92,13 +93,51 @@ async function main() {
             "searchTerms": req.query
         });
     })
-
+    //add new customers into database and display
     app.post('/customers/create', async function (req, res) {
         const { custf_name, custl_name, cust_email } = req.body;
         const query = "INSERT INTO customers(custf_name, custl_name, cust_email) VALUES (? ,?, ?);"
         const results = await connection.execute(query, [custf_name, custl_name, cust_email]);
         //res.send(results)
         res.redirect('/customers');
+    })
+
+    //delete of customers
+    app.get('/customers/:customer_id/delete', async function (req, res) {
+        try{
+            const customer_id = req.params.customer_id;
+            const [customersInvoices] = await connection.execute("SELECT * FROM invoices WHERE customer_id =?",
+                [customer_id]);
+    
+            if (customersInvoices.length > 0) {
+                res.render('errors', {
+                    'errorMessage': "The Customer still have outstanding balance"
+                })
+                return;
+            }
+            const [customers] = await connection.execute("SELECT * FROM customers WHERE customer_id = ?",
+                [customer_id]);
+            const customerToDelete = customers[0];
+            res.render("delete_customers", {
+                'customer': customerToDelete    
+            })
+        }catch(e){
+            res.json(404)
+        }  
+    })
+    app.post('/customers/:customer_id/delete', async function(req,res){
+        try{
+          const query = "DELETE FROM customers where customer_id=?";
+          await connection.execute(query,[req.params.customer_id]);
+          res.render('successful_message',{
+            'Message': 'customer deleted successfully'
+        })
+            res.redirect('/customers');
+        }catch(e){
+            res.render('error',{
+                'errorMessage': 'Unable to delete customer'
+            })
+        }
     })
 
     //update customers page
