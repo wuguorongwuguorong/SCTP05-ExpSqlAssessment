@@ -18,7 +18,7 @@ CREATE TABLE employees(
 CREATE TABLE outlets(
    outlet_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
    outlet_name VARCHAR(30) NOT NULL,
-   buidling_name VARCHAR(30) NOT NULL,
+   building_name VARCHAR(30) NOT NULL,
    addr1 VARCHAR(45) NOT NULL,
    addr2 VARCHAR(45) NOT NULL,
    zipcode int(10) NOT NULL
@@ -32,18 +32,18 @@ CREATE TABLE roles(
 CREATE TABLE menu(
    menu_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
    menu_name VARCHAR(30) NOT NULL,
-   menu_price_before_tax FLOAT NOT NULL
+   menu_price_before_tax DECIMAL(10,2) NOT NULL
 ) engine = innodb;
 
-CREATE TABLE schedules(
+CREATE TABLE schedules (
    schedule_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
    clock_in DATETIME NOT NULL,
    clock_out DATETIME NOT NULL
 ) engine = innodb;
 
+
 CREATE TABLE invoices (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100),
     printed TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ); engine = innodb;
 
