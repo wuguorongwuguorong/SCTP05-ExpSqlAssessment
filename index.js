@@ -2,28 +2,29 @@ const express = require('express');
 const hbs = require('hbs');
 const wax = require('wax-on');
 const { createConnection } = require('mysql2/promise');
+const waxOn = require('wax-on');
 require('dotenv').config();
 
-let app = express();// declare before starting to use 'app..."
-
-// 1B. SETUP VIEW ENGINE
-app.set('view engine', 'hbs');
-
-// 1C. SETUP STATIC FOLDER
-app.use(express.static('public'));
+// 1D. SETUP WAX ON (FOR TEMPLATE INHERITANCE)
+waxOn.on(hbs.handlebars);
+waxOn.setLayoutPath('./views/layouts')
 
 // Include the 188 handlebar helpers
 const helpers = require('handlebars-helpers')({
     handlebars: hbs.handlebars
 });
 
-// 1D. SETUP WAX ON (FOR TEMPLATE INHERITANCE)
-wax.on(hbs.handlebars);
-wax.setLayoutPath('./views/layouts')
+let app = express();// declare before starting to use 'app..."
+
+// 1B. SETUP VIEW ENGINE
+app.set('view engine', 'hbs');
 
 app.use(express.urlencoded({
     extended: false // set to false for fast form processing but without advanced features
 }))
+
+// 1C. SETUP STATIC FOLDER
+//app.use(express.static('public'));
 
 async function main() {
     // create a connection to our MySQL database
@@ -44,21 +45,15 @@ async function main() {
     })
     app.get('/customers', async function (req, res) {
 
-        // Begin with a base query
-        // The base query will return all the rows
-        // SQL to execute: SELECT * FROM Customers
         let query = `SELECT * FROM customers WHERE 1`
-
         const bindings = [];
 
         // extract search terms
         const { custf_name, custl_name, cust_email } = req.query;
-
         if (custf_name) {
             query += ` AND custf_name LIKE ?`;
             bindings.push('%' + custf_name + '%')
         }
-
         if (custl_name) {
             query += ` AND custl_name LIKE ?`;
             bindings.push('%' + custl_name + '%');
@@ -67,8 +62,6 @@ async function main() {
             query += ` AND cust_email LIKE ?`;
             bindings.push('%' + cust_email + '%');
         }
-
-
         console.log(query);
 
         // INSTEAD OF:
@@ -94,7 +87,7 @@ async function main() {
     app.get('/customers/create', async function (req, res) {
         const [customers] = await connection.execute("SELECT * FROM customers")
         console.log(customers);
-        res.render('create_customer', {
+        res.render('create_customers', {
             "allCustomers": customers,
             "searchTerms": req.query
         });
@@ -121,15 +114,22 @@ async function main() {
     })
 
     app.post('/customers/:customer_id/update', async function (req, res) {
-        const { custf_name, custl_name, cust_email } = req.body;
-        const query = `UPDATE customers SET custf_name= ? , custl_name = ? cust_email =?
-         WHERE customer_id =?`;
-        const bindings = [custf_name, custl_name, cust_email, req.params_customer_id];
-        await connection.execute(query, bindings);
-        console.log('Request Body:', req.body);
-        console.log('Customer ID:', req.params.customer_id);
+        try {
+            const { custf_name, custl_name, cust_email } = req.body;
+            const query = `UPDATE customers SET custf_name= ? , custl_name = ?, cust_email =?
+             WHERE customer_id =?`;
+            const bindings = [custf_name, custl_name, cust_email, req.params.customer_id];
+            await connection.execute(query, bindings);
+            console.log('Request Body:', req.body);
+            console.log('Customer ID:', req.params.customer_id);
 
-        res.redirect('/customers');
+            res.redirect('/customers');
+        } catch (e) {
+            res.render('errors', {
+                'errorMessage': "Unable to edit customer"
+            })
+        }
+
     })
 
 }
