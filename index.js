@@ -50,7 +50,7 @@ async function main() {
         const bindings = [];
 
         // extract search terms
-        const { custf_name, custl_name, cust_email } = req.query;
+        const { custf_name, custl_name} = req.query;
         if (custf_name) {
             query += ` AND custf_name LIKE ?`;
             bindings.push('%' + custf_name + '%')
@@ -59,10 +59,7 @@ async function main() {
             query += ` AND custl_name LIKE ?`;
             bindings.push('%' + custl_name + '%');
         }
-        if (cust_email) {
-            query += ` AND cust_email LIKE ?`;
-            bindings.push('%' + cust_email + '%');
-        }
+      
         console.log(query);
 
         const [customers] = await connection.execute({
@@ -70,7 +67,7 @@ async function main() {
             'nestTables': true
         }, bindings);
 
-        res.render('customers.hbs', {
+        res.render('customers', {
             "allCustomers": customers,
             "searchTerms": req.query
         })
