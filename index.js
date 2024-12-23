@@ -12,15 +12,14 @@ app.set('view engine', 'hbs');
 // 1C. SETUP STATIC FOLDER
 app.use(express.static('public'));
 
-// 1D. SETUP WAX ON (FOR TEMPLATE INHERITANCE)
-wax.on(hbs.handlebars);
-wax.setLayoutPath('./views/layouts')
-
 // Include the 188 handlebar helpers
 const helpers = require('handlebars-helpers')({
     handlebars: hbs.handlebars
 });
 
+// 1D. SETUP WAX ON (FOR TEMPLATE INHERITANCE)
+wax.on(hbs.handlebars);
+wax.setLayoutPath('./views/layouts')
 
 app.use(express.urlencoded({
     extended: false // set to false for fast form processing but without advanced features
@@ -109,6 +108,7 @@ async function main() {
         res.redirect('/customers');
     })
 
+    //update customers page
     app.get('/customers/:customer_id/update', async function (req, res) {
         const [invoices] = await connection.execute("SELECT * FROM invoices")
         const [customers] = await connection.execute("SELECT * FROM customers WHERE customer_id = ?",
@@ -124,9 +124,12 @@ async function main() {
         const { custf_name, custl_name, cust_email } = req.body;
         const query = `UPDATE customers SET custf_name= ? , custl_name = ? cust_email =?
          WHERE customer_id =?`;
-        const bindings = [custf_name, custl_name, cust_email, customer_id = req.params_customer_id];
+        const bindings = [custf_name, custl_name, cust_email, req.params_customer_id];
         await connection.execute(query, bindings);
-        res.redirect('/customers')
+        console.log('Request Body:', req.body);
+        console.log('Customer ID:', req.params.customer_id);
+
+        res.redirect('/customers');
     })
 
 }
