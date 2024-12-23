@@ -65,14 +65,6 @@ async function main() {
         }
         console.log(query);
 
-        // INSTEAD OF:
-        // const results = await connection.execute(query);
-        // // connection.execute will return an array
-        // // index 0 will be an array of our records that we want
-        // const customers = results[0];
-
-        // we can use array destructring to just take the
-        // first result from an array
         const [customers] = await connection.execute({
             'sql': query,
             'nestTables': true
@@ -129,9 +121,9 @@ async function main() {
         try{
           const query = "DELETE FROM customers where customer_id=?";
           await connection.execute(query,[req.params.customer_id]);
-          res.render('successful_message',{
-            'Message': 'customer deleted successfully'
-        })
+        //  res.render('successful_message',{
+        //    'happyMessage': 'customer deleted successfully'
+        //})
             res.redirect('/customers');
         }catch(e){
             res.render('error',{
@@ -155,8 +147,7 @@ async function main() {
     app.post('/customers/:customer_id/update', async function (req, res) {
         try {
             const { custf_name, custl_name, cust_email } = req.body;
-            const query = `UPDATE customers SET custf_name= ? , custl_name = ?, cust_email =?
-             WHERE customer_id =?`;
+            const query = `UPDATE customers SET custf_name= ? , custl_name = ?, cust_email =? WHERE customer_id =?`;
             const bindings = [custf_name, custl_name, cust_email, req.params.customer_id];
             await connection.execute(query, bindings);
             console.log('Request Body:', req.body);
