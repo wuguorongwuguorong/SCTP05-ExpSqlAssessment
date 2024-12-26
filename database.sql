@@ -45,7 +45,7 @@ CREATE TABLE schedules (
 CREATE TABLE invoices (
     id INT AUTO_INCREMENT PRIMARY KEY,
     printed TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    ); engine = innodb;
+    ) engine = innodb;
 
 --adding role and outlet id into employees table
 ALTER TABLE employees ADD COLUMN role_id int UNSIGNED;

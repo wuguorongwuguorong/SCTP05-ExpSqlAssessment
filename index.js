@@ -46,7 +46,7 @@ async function main() {
     })
     app.get('/customers', async function (req, res) {
 
-        let query = `SELECT * FROM customers WHERE 1`
+        let query = `SELECT * FROM customers WHERE 1=1`
         const bindings = [];
 
         // extract search terms
