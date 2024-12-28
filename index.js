@@ -60,7 +60,7 @@ async function main() {
             bindings.push('%' + custl_name + '%');
         }
       
-        console.log(query);
+        console.log("query",query);
 
         const [customers] = await connection.execute({
             'sql': query,
@@ -94,16 +94,16 @@ async function main() {
     //delete of customers
     app.get('/customers/:customer_id/delete', async function (req, res) {
         try{
-            const customer_id = req.params.customer_id;
-            const [customersInvoices] = await connection.execute("SELECT * FROM invoices WHERE customer_id =?",
-                [customer_id]);
+             const customer_id = req.params.customer_id;
+            // const [customersInvoices] = await connection.execute("SELECT * FROM customers WHERE customer_id =?",
+            //     [customer_id]); // customers changed from invoices. 
     
-            if (customersInvoices.length > 0) {
-                res.render('errors', {
-                    'errorMessage': "The Customer still have outstanding balance"
-                })
-                return;
-            }
+            // if (customersInvoices.length > 0) {
+            //     res.render('errors', {
+            //         'errorMessage': "The Customer still have outstanding balance"
+            //     })
+            //     return;
+            // }
             const [customers] = await connection.execute("SELECT * FROM customers WHERE customer_id = ?",
                 [customer_id]);
             const customerToDelete = customers[0];
@@ -131,13 +131,13 @@ async function main() {
 
     //update customers page
     app.get('/customers/:customer_id/update', async function (req, res) {
-        const [invoices] = await connection.execute("SELECT * FROM invoices")
+        //const [invoices] = await connection.execute("SELECT * FROM invoices")
         const [customers] = await connection.execute("SELECT * FROM customers WHERE customer_id = ?",
             [req.params.customer_id])
         const customer = customers[0];
         res.render('edit_customers', {
             customer,
-            invoices
+            //invoices
         })
     })
 
